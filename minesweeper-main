@@ -1,0 +1,163 @@
+import javax.swing.*;
+import java.awt.*;
+
+/**
+ * Main class for the Minesweeper game.
+ * Contains the main method to run the game.
+ */
+public class MinesweeperGame {
+    
+    /**
+     * Main method to run the game.
+     * @param args Command line arguments (not used).
+     */
+    public static void main(String[] args) {
+        // Create a new grid
+        Grid grid = new Grid();
+        
+        // Print the grids for debugging
+        grid.printGrids();
+        
+        // Create and show the GUI
+        javax.swing.SwingUtilities.invokeLater(() -> {
+            createAndShowGUI(grid);
+        });
+    }
+    
+    /**
+     * Creates and displays the game GUI.
+     * @param grid The game grid.
+     */
+    private static void createAndShowGUI(Grid grid) {
+        // Create the main frame
+        JFrame frame = new JFrame("Minesweeper");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(500, 500);
+        
+        // Create the grid panel
+        JPanel gridPanel = new JPanel(new GridLayout(grid.getNumRows(), grid.getNumColumns()));
+        
+        // Create buttons for each cell
+        JButton[][] buttons = new JButton[grid.getNumRows()][grid.getNumColumns()];
+        
+        for (int i = 0; i < grid.getNumRows(); i++) {
+            for (int j = 0; j < grid.getNumColumns(); j++) {
+                final int row = i;
+                final int col = j;
+                
+                buttons[i][j] = new JButton();
+                buttons[i][j].setPreferredSize(new Dimension(40, 40));
+                buttons[i][j].addActionListener(e -> handleButtonClick(grid, buttons, row, col));
+                
+                gridPanel.add(buttons[i][j]);
+            }
+        }
+        
+        // Add the grid panel to the frame
+        frame.add(gridPanel);
+        
+        // Show the frame
+        frame.pack();
+        frame.setVisible(true);
+    }
+    
+    /**
+     * Handles a button click event.
+     * @param grid The game grid.
+     * @param buttons The grid buttons.
+     * @param row The row of the clicked button.
+     * @param col The column of the clicked button.
+     */
+    private static void handleButtonClick(Grid grid, JButton[][] buttons, int row, int col) {
+        // Check if there's a bomb at this location
+        if (grid.isBombAtLocation(row, col)) {
+            // Game over - reveal all cells
+            revealAllCells(grid, buttons);
+            
+            // Show game over message
+            int choice = JOptionPane.showConfirmDialog(
+                null,
+                "You hit a bomb! Game over. Do you want to play again?",
+                "Game Over",
+                JOptionPane.YES_NO_OPTION
+            );
+            
+            handleGameOverChoice(choice);
+        } else {
+            // Reveal this cell
+            int count = grid.getCountAtLocation(row, col);
+            buttons[row][col].setText(String.valueOf(count));
+            buttons[row][col].setEnabled(false);
+            
+            // Check if this was the last non-bomb cell
+            if (checkForWin(grid, buttons)) {
+                revealAllCells(grid, buttons);
+                
+                // Show win message
+                int choice = JOptionPane.showConfirmDialog(
+                    null,
+                    "Congratulations! You won! Do you want to play again?",
+                    "You Won",
+                    JOptionPane.YES_NO_OPTION
+                );
+                
+                handleGameOverChoice(choice);
+            }
+        }
+    }
+    
+    /**
+     * Reveals all cells in the grid.
+     * @param grid The game grid.
+     * @param buttons The grid buttons.
+     */
+    private static void revealAllCells(Grid grid, JButton[][] buttons) {
+        for (int i = 0; i < grid.getNumRows(); i++) {
+            for (int j = 0; j < grid.getNumColumns(); j++) {
+                if (grid.isBombAtLocation(i, j)) {
+                    buttons[i][j].setText("B");
+                } else {
+                    buttons[i][j].setText(String.valueOf(grid.getCountAtLocation(i, j)));
+                }
+                buttons[i][j].setEnabled(false);
+            }
+        }
+    }
+    
+    /**
+     * Checks if the player has won the game.
+     * @param grid The game grid.
+     * @param buttons The grid buttons.
+     * @return True if the player has won, false otherwise.
+     */
+    private static boolean checkForWin(Grid grid, JButton[][] buttons) {
+        int nonBombCellsCount = grid.getNumRows() * grid.getNumColumns() - grid.getNumBombs();
+        int revealedCellsCount = 0;
+        
+        for (int i = 0; i < grid.getNumRows(); i++) {
+            for (int j = 0; j < grid.getNumColumns(); j++) {
+                if (!grid.isBombAtLocation(i, j) && !buttons[i][j].isEnabled()) {
+                    revealedCellsCount++;
+                }
+            }
+        }
+        
+        return revealedCellsCount == nonBombCellsCount;
+    }
+    
+    /**
+     * Handles the player's choice after game over or win.
+     * @param choice The player's choice (yes/no).
+     */
+    private static void handleGameOverChoice(int choice) {
+        if (choice == JOptionPane.YES_OPTION) {
+            // Create a new game
+            javax.swing.SwingUtilities.invokeLater(() -> {
+                createAndShowGUI(new Grid());
+            });
+        } else {
+            // Exit the application
+            System.exit(0);
+        }
+    }
+}
