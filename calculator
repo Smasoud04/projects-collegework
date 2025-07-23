@@ -1,0 +1,157 @@
+import java.util.Scanner;
+
+public class Main {
+
+    static Scanner input = new Scanner(System.in);
+
+    public static void main(String[] args) {
+
+        char choice;
+        do {
+            System.out.println("Enter the calculator mode: Standard/Scientific?");
+            String mode = input.next();
+            if (mode.equalsIgnoreCase("Standard")) {
+                System.out.println("The calculator will operate in standard mode.");
+                standardMode();
+            } else if (mode.equalsIgnoreCase("Scientific")) {
+                System.out.println("The calculator will operate in scientific mode.");
+                scientificMode();
+            } else {
+                System.out.println("Invalid mode " + mode);
+                 System.out.println("Enter '+' for addition, '-' for subtractions, '*' for multiplication, '/' for division, 'sin' for sin x, 'cos' for cos x, 'tan' for tan x: ");
+        String operator = input.next();
+            }
+
+            System.out.println("\nDo you want to start over? (Y/N) ");
+            choice = Character.toUpperCase(input.next().charAt(0));
+        } while (choice == 'Y');
+
+        System.out.println("Goodbye");
+    }
+
+    public static void scientificMode() {
+
+        System.out.println("Enter '+' for addition, '-' for subtractions, '*' for multiplication, '/' for division, 'sin' for sin x, 'cos' for cos x, 'tan' for tan x:");
+        String operator = input.next();
+
+        System.out.println();
+        double number, total;
+
+        int num;
+        switch (operator) {
+            case "+":
+                num = (int) getInput("How many numbers do you want to add?");
+                System.out.println("Enter " + num + " numbers");
+                total = 0;
+                for (int i = 0; i < num; i++) {
+                    total += input.nextDouble();
+                }
+                System.out.println("Result: " + total);
+                break;
+            case "-":
+                num = (int) getInput("How many numbers do you want to subtract?");
+                System.out.println("Enter " + num + " numbers");
+                total = 0;
+                for (int i = 0; i < num; i++) {
+                    total = input.nextDouble();
+                }
+                System.out.println("Result: " + total +"\n");
+                break;
+            case "*":
+                num = (int) getInput("How many numbers do you want to multiply? ");
+                System.out.println("Enter " + num + " numbers");
+                total = 1;
+                for (int i = 0; i < num; i++) {
+                    total *= input.nextDouble();
+                }
+                System.out.println("Result: " + total +"\n");
+                break;
+            case "/":
+                num = (int) getInput("How many numbers do you want to divide? ");
+                System.out.println("Enter " + num + " numbers");
+                total = 1;
+                for (int i = 0; i < num; i++) {
+                    total /= input.nextDouble();
+                }
+                System.out.println("Result: " + total +"\n");
+                break;
+            case "sin":
+                number = getInput("Enter a number in radians to find the sine ");
+                System.out.println("Result:" + Math.sin(number) +"\n");
+                break;
+            case "cos":
+                number = getInput("Enter a number in radians to find the cosine ");
+                System.out.println("Result: " + Math.cos(number) +"\n");
+                break;
+            case "tan":
+                number = getInput("Enter a number in radians to find the tangent ");
+                System.out.println("Result:" + Math.tan(number) +"\n");
+                break;
+            default:
+                System.out.println("Invalid operator " + operator);
+        }
+    }
+
+    public static void standardMode() {
+        System.out.println("Enter '+' for addition, '-' for subtractions, '*' for multiplication, '/' for division");
+        String operator = input.next();
+
+        System.out.println();
+        double total;
+
+        int num;
+        switch (operator) {
+            case "+":
+                num = (int) getInput("How many numbers do you want to add?");
+                System.out.println("Enter " + num + " numbers");
+                total = 0;
+                for (int i = 0; i < num; i++) {
+                    total += input.nextDouble();
+                }
+                System.out.println("Result: " + total +"\n");
+                break;
+            case "-":
+                num = (int) getInput("How many numbers do you want to subtract? ");
+                System.out.println("Enter " + num + " numbers");
+                total = 0;
+                for (int i = 0; i < num; i++) {
+                    total += -input.nextDouble();
+                }
+                System.out.println("Result: " + total +"\n");
+                break;
+            case "*":
+                num = (int) getInput("How many numbers do you want to multiply? ");
+                System.out.println("Enter " + num + " numbers");
+                total = 1;
+                for (int i = 0; i < num; i++) {
+                    total *= input.nextDouble();
+                }
+                System.out.println("Result: " + total +"\n");
+                break;
+            case "/":
+                num = (int) getInput("How many numbers do you want to divide? ");
+                System.out.println("Enter " + num + " numbers");
+                total = 1;
+                 for (int i = 0; i < num; i++) {
+                      total /= input.nextDouble();
+                if (total <0){
+                     System.out.println("Result: 0.0 \n");
+                 }
+                 else
+                 System.out.println("Result: " + total +"\n");
+                 }
+                    total = input.nextDouble();
+                
+                System.out.println("Result: " + total +"\n");
+                break;
+            default:
+                System.out.println("Invalid operator " + operator);
+                break;
+        }
+    }
+
+    public static double getInput(String statement) {
+        System.out.println(statement);
+        return input.nextDouble();
+    }
+}
