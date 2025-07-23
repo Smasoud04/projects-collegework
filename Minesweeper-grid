@@ -1,0 +1,208 @@
+
+
+
+import java.util.Random;
+import java.util.Arrays;
+
+
+
+/**
+ * Grid class for a Minesweeper game.
+ * Represents a 10x10 grid with 25 randomly placed bombs.
+ */
+public class Grid {
+    // Constants
+    private static final int NUM_ROWS = 10;
+    private static final int NUM_COLUMNS = 10;
+    private static final int NUM_BOMBS = 25;
+    
+    // Grid data
+    private boolean[][] bombGrid;
+    private int[][] countGrid;
+    
+    /**
+     * Default constructor.
+     * Initializes the grids and places bombs randomly.
+     */
+    public Grid() {
+        // Initialize the grids
+        bombGrid = new boolean[NUM_ROWS][NUM_COLUMNS];
+        countGrid = new int[NUM_ROWS][NUM_COLUMNS];
+        
+        // Create the bomb grid and count grid
+        createBombGrid();
+        createCountGrid();
+    }
+    
+    /**
+     * Get the number of rows in the grid.
+     * @return The number of rows.
+     */
+    public int getNumRows() {
+        return NUM_ROWS;
+    }
+    
+    /**
+     * Get the number of columns in the grid.
+     * @return The number of columns.
+     */
+    public int getNumColumns() {
+        return NUM_COLUMNS;
+    }
+    
+    /**
+     * Get the number of bombs in the grid.
+     * @return The number of bombs.
+     */
+    public int getNumBombs() {
+        return NUM_BOMBS;
+    }
+    
+    /**
+     * Check if there is a bomb at the specified location.
+     * @param row The row index.
+     * @param column The column index.
+     * @return True if there is a bomb, false otherwise.
+     */
+    public boolean isBombAtLocation(int row, int column) {
+        // Check if the location is valid
+        if (row < 0 || row >= NUM_ROWS || column < 0 || column >= NUM_COLUMNS) {
+            return false;
+        }
+        return bombGrid[row][column];
+    }
+    
+    /**
+     * Get the count of bombs in the neighborhood of the specified location.
+     * @param row The row index.
+     * @param column The column index.
+     * @return The count of bombs in the neighborhood.
+     */
+    public int getCountAtLocation(int row, int column) {
+        // Check if the location is valid
+        if (row < 0 || row >= NUM_ROWS || column < 0 || column >= NUM_COLUMNS) {
+            return 0;
+        }
+        return countGrid[row][column];
+    }
+    
+    /**
+     * Get a copy of the bomb grid.
+     * @return A copy of the bomb grid.
+     */
+    public boolean[][] getBombGrid() {
+        // Create a copy of the bombGrid
+        boolean[][] copy = new boolean[NUM_ROWS][NUM_COLUMNS];
+        for (int i = 0; i < NUM_ROWS; i++) {
+            copy[i] = Arrays.copyOf(bombGrid[i], NUM_COLUMNS);
+        }
+        return copy;
+    }
+    
+    /**
+     * Get a copy of the count grid.
+     * @return A copy of the count grid.
+     */
+    public int[][] getCountGrid() {
+        // Create a copy of the countGrid
+        int[][] copy = new int[NUM_ROWS][NUM_COLUMNS];
+        for (int i = 0; i < NUM_ROWS; i++) {
+            copy[i] = Arrays.copyOf(countGrid[i], NUM_COLUMNS);
+        }
+        return copy;
+    }
+    
+    /**
+     * Creates the bomb grid with NUM_BOMBS randomly placed bombs.
+     */
+    private void createBombGrid() {
+        Random random = new Random();
+        int bombsPlaced = 0;
+        
+        // Initialize the grid with all false
+        for (int i = 0; i < NUM_ROWS; i++) {
+            for (int j = 0; j < NUM_COLUMNS; j++) {
+                bombGrid[i][j] = false;
+            }
+        }
+        
+        // Place bombs randomly
+        while (bombsPlaced < NUM_BOMBS) {
+            int row = random.nextInt(NUM_ROWS);
+            int col = random.nextInt(NUM_COLUMNS);
+            
+            // If there's no bomb at this location, place one
+            if (!bombGrid[row][col]) {
+                bombGrid[row][col] = true;
+                bombsPlaced++;
+            }
+        }
+    }
+    
+    /**
+     * Creates the count grid based on the bomb grid.
+     * Each value in the count grid represents the number of bombs in the neighborhood,
+     * including the location itself and its eight adjacent locations.
+     */
+    private void createCountGrid() {
+        // Initialize the count grid
+        for (int i = 0; i < NUM_ROWS; i++) {
+            for (int j = 0; j < NUM_COLUMNS; j++) {
+                countGrid[i][j] = countBombsInNeighborhood(i, j);
+            }
+        }
+    }
+    
+    /**
+     * Counts the bombs in the neighborhood of a location.
+     * @param row The row index.
+     * @param col The column index.
+     * @return The count of bombs in the neighborhood.
+     */
+    private int countBombsInNeighborhood(int row, int col) {
+        int count = 0;
+        
+        // Check all neighboring cells, including the cell itself
+        for (int i = row - 1; i <= row + 1; i++) {
+            for (int j = col - 1; j <= col + 1; j++) {
+                // Skip if out of bounds
+                if (i < 0 || i >= NUM_ROWS || j < 0 || j >= NUM_COLUMNS) {
+                    continue;
+                }
+                
+                // Increment count if there's a bomb
+                if (bombGrid[i][j]) {
+                    count++;
+                }
+            }
+        }
+        
+        return count;
+    }
+    
+    /**
+     * Print the bomb grid and count grid for debugging.
+     */
+    public void printGrids() {
+        System.out.println("Bomb Grid:");
+        for (int i = 0; i < NUM_ROWS; i++) {
+            for (int j = 0; j < NUM_COLUMNS; j++) {
+                System.out.print((bombGrid[i][j] ? "T" : "F") + " ");
+            }
+            System.out.println();
+        }
+        
+        System.out.println("\nCount Grid:");
+        for (int i = 0; i < NUM_ROWS; i++) {
+            for (int j = 0; j < NUM_COLUMNS; j++) {
+                System.out.print(countGrid[i][j] + " ");
+            }
+            System.out.println();
+        }
+    }
+}
+
+
+
+
+
